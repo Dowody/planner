@@ -5,6 +5,7 @@ import tailwindcss from "tailwindcss"
 import autoprefixer from "autoprefixer"
 
 export default defineConfig({
+  base: "/planner/",
   plugins: [react()],
   css: {
     postcss: {
