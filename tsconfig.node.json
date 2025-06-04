@@ -6,12 +6,17 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    /* Required for project references */
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "./dist",
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
 
     /* Linting */
     "strict": true,
