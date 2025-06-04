@@ -13,6 +13,7 @@ export function Auth() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -31,15 +32,32 @@ export function Auth() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    let authError = null;
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+      });
+      authError = error;
+      if (!error) {
+        // Handle successful sign-up (e.g., show a message to check email)
+        console.log("Sign-up successful. Please check your email for confirmation.");
+        setError("Sign-up successful. Please check your email for confirmation.");
+        // Optionally, switch back to sign-in view or show a success message
+        // setIsSignUp(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      authError = error;
+    }
 
     setLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (authError) {
+      setError(authError.message);
     }
   };
 
@@ -56,8 +74,8 @@ export function Auth() {
     >
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Sign In</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+          <CardTitle className="text-2xl">{isSignUp ? 'Sign Up' : 'Sign In'}</CardTitle>
+          <CardDescription>{isSignUp ? 'Create a new account' : 'Sign in to your account'}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
@@ -89,8 +107,15 @@ export function Auth() {
             {error && <p className="text-sm text-red-500">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : 'Sign In'}
+              {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </Button>
+            <button
+              type="button"
+              className="w-full text-center text-sm text-blue-600 hover:underline"
+              onClick={() => setIsSignUp(!isSignUp)}
+            >
+              {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
+            </button>
           </form>
         </CardContent>
       </Card>
